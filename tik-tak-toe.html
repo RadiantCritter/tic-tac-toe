@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+    <style>
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #000;
+            color: #a0c1a1;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 120px);
+            grid-gap: 10px;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 120px;
+            height: 120px;
+            font-size: 6em;
+            cursor: pointer;
+            border: 6px solid #6209e8;
+            border-radius: 10px;
+            transition: border-color 0.5s ease-in-out;
+            box-shadow: 0 0 10px rgba(113, 12, 99, 0.5);
+        }
+        .flashy-text {
+        animation: flash 1s infinite alternate;
+        font-size: 3em;
+        color: red;
+        transition: 0.5s;
+    }
+
+    @keyframes flash {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0.5;
+        }
+    }
+    .flashy-text {
+            animation: flash 1s infinite alternate;
+        }
+
+        @keyframes flash {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0.5;
+            }
+        }
+
+        #restart-button {
+        margin-top: 20px;
+        margin-right: 20px; /* Added margin-right to shift the button to the right */
+        padding: 10px 20px;
+        font-size: 1em;
+        cursor: pointer;
+        background-color: #fff;
+        color: #000;
+        border: 2px solid #000;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    #restart-button:hover {
+        background-color: #0c6582;
+        color: #17a514;
+    }
+    </style>
+    
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="board"></div>
+    <div id="result"></div>
+
+    <!-- Existing HTML and Styles -->
+    <button id="restart-button" onclick="restartGame()">Restart Game</button>
+
+<script>
+    const board = document.getElementById('board');
+    const resultDiv = document.getElementById('result');
+    let currentPlayer = 'X';
+    let gameBoard = ['', '', '', '', '', '', '', '', ''];
+    let gameActive = true;
+
+    // Create the game board
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = i;
+        cell.addEventListener('click', handleCellClick);
+        board.appendChild(cell);
+    }
+
+    function handleCellClick(event) {
+        const index = event.target.dataset.index;
+
+        // Check if the cell is empty and the game is still active
+        if (gameBoard[index] === '' && gameActive) {
+            // Update the game board and display
+            gameBoard[index] = currentPlayer;
+            event.target.textContent = currentPlayer;
+
+            // Check for a win or a tie
+            if (checkWin()) {
+                showWinningLine();
+                resultDiv.innerHTML = `<span class="flashy-text">Player ${currentPlayer} wins!</span>`;
+                gameActive = false;
+            } else if (checkTie()) {
+                resultDiv.innerHTML = '<span class="flashy-text">It\'s a tie!</span>';
+                gameActive = false;
+            } else {
+                // Switch to the next player
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+    }
+
+    function checkWin() {
+        const winConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        for (const condition of winConditions) {
+            const [a, b, c] = condition;
+            if (gameBoard[a] !== '' && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function showWinningLine() {
+        const winConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        for (const condition of winConditions) {
+            const [a, b, c] = condition;
+            if (gameBoard[a] !== '' && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                const cells = document.querySelectorAll('.cell');
+                cells[a].style.borderColor = 'red';
+                cells[b].style.borderColor = 'red';
+                cells[c].style.borderColor = 'red';
+                break;
+            }
+        }
+    }
+
+    function checkTie() {
+        return !gameBoard.includes('');
+    }
+    function restartGame() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.style.borderColor = '#fff';
+            });
+
+            resultDiv.innerHTML = '';
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            currentPlayer = 'X';
+        }
+</script>
+
+</body>
+</html>
